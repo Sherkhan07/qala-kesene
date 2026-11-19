@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ГИС тізілімі · Qala&Kesene</title>
+<meta name="description" content="Қалалар мен кесенелердің координаталар тізілімі, GeoJSON және CSV экспорты">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body data-page="registry">
+<main>
+  <div class="wrap page-head">
+    <div class="crumbs"><a href="index.html">Басты бет</a> / Тізілім</div>
+    <h1>ГИС тізілімі</h1>
+    <p>Барлық нысандардың координаталары. Кестені сұрыптауға және сүзуге болады, деректерді ГИС бағдарламаларына (QGIS, ArcGIS) GeoJSON немесе CSV форматында жүктеп алуға болады.</p>
+  </div>
+  <div class="wrap" style="padding-bottom:80px">
+    <div class="toolbar">
+      <input class="input" type="search" id="q" placeholder="Атауы немесе орны бойынша іздеу…" aria-label="Іздеу">
+      <button class="chip on" data-kind="all">Барлығы</button>
+      <button class="chip" data-kind="city">Қалалар</button>
+      <button class="chip" data-kind="mausoleum">Кесенелер</button>
+      <span class="sp"></span>
+      <span class="count" id="count"></span>
+      <button class="btn ghost sm" id="geojson">⬇ GeoJSON</button>
+      <button class="btn ghost sm" id="csv">⬇ CSV</button>
+    </div>
+    <div class="tbl-wrap"><table><thead><tr>
+      <th data-k="name">Атауы</th><th data-k="kind">Түрі</th><th data-k="s">Дәуірі</th><th data-k="loc">Орналасқан жері</th><th data-k="lat">Ендік</th><th data-k="lon">Бойлық</th>
+    </tr></thead><tbody id="tbody"></tbody></table></div>
+  </div>
+</main>
+<script type="module" src="js/pages/registry.js"></script>
+</body>
+</html>

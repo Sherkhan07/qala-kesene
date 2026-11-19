@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Қалалар картасы · Qala&Kesene</title>
+<meta name="description" content="Қазақстанның ортағасырлық қалаларының 3D картасы">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="stylesheet" href="css/main.css">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body data-page="cities">
+<main>
+  <div class="wrap page-head">
+    <div class="crumbs"><a href="index.html">Басты бет</a> / Қалалар</div>
+    <h1>Ортағасырлық қалалар</h1>
+    <p>Бедерлі 3D картадағы 12 қала. Бағананың биіктігі қаланың өмір сүрген ғасырлар санын көрсетеді. Нысанды таңдасаңыз, карта сол жерге жақындайды. Қалқымалы терезедегі «3D модель» сілтемесі қаланың схемалық реконструкциясын ашады.</p>
+  </div>
+  <div class="wrap" id="mapMount"></div>
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><div class="eyebrow">Хронология</div><h2>Қалалардың өмір сүру кезеңдері</h2><p>Жолақты басқанда қала картада ашылады.</p></div>
+      <div class="card chrono" id="chrono"></div>
+    </div>
+  </section>
+  <section class="alt">
+    <div class="wrap">
+      <div class="sec-head"><div class="eyebrow">3D реконструкция</div><h2>Әр қаланың 3D моделі</h2><p>Модельдер параметрлер бойынша жиналады: қала пішіні, төбе биіктігі, цитадель, қақпалар, рабад, өзен, кәріз және таулар.</p></div>
+      <div class="grid g3" id="cards"></div>
+    </div>
+  </section>
+</main>
+<script type="module" src="js/pages/cities.js"></script>
+</body>
+</html>

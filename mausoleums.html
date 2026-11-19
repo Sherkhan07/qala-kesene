@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кесенелер картасы · Qala&Kesene</title>
+<meta name="description" content="Қазақстанның ортағасырлық кесенелерінің 3D картасы">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="stylesheet" href="css/main.css">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body data-page="mausoleums">
+<main>
+  <div class="wrap page-head">
+    <div class="crumbs"><a href="index.html">Басты бет</a> / Кесенелер</div>
+    <h1>Кесенелер мен сәулет ескерткіштері</h1>
+    <p>Төрт өңірдегі 18 ескерткіш. Бағананың биіктігі ескерткіштің көнелігін білдіреді: неғұрлым ерте салынса, соғұрлым биік. Әр кесененің жеке беті мен 3D моделі бар.</p>
+  </div>
+  <div class="wrap" id="mapMount"></div>
+  <section class="alt">
+    <div class="wrap">
+      <div class="sec-head"><div class="eyebrow">Типология</div><h2>Сәулеттік типтер бойынша</h2><p>Кесенелер құрылымдық типіне қарай топтастырылған. Әр тип өз параметрлік 3D құрастырушысымен жиналады.</p></div>
+      <div id="types"></div>
+    </div>
+  </section>
+</main>
+<script type="module" src="js/pages/mausoleums.js"></script>
+</body>
+</html>
