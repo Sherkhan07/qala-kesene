@@ -70,6 +70,48 @@ const TEX = {
     g.fillStyle = "#d9d6cf"; g.fillRect(0, 0, S, S);
     for (let i = 0; i < 1800; i++) { g.fillStyle = `rgba(90,90,90,${rnd(.03, .1)})`; g.fillRect(rnd(0, S), rnd(0, S), 2, 2); }
   }),
+  // ---- Қожа Ахмет Ясауи кесенесіне арналған текстуралар ----
+  // Глазурьсіз ашық-қоңыр кірпіш (аяқталмаған портал мен Қазандық күмбезі)
+  ybrick: () => canvasTex("ybrick", (g, S) => bricks(g, S, [212, 178, 128], "#b8966a", { vary: 16, bh: 12, bw: 30 })),
+  // «Бannai» әдісімен глазурьлі кірпіштен қаланған геометриялық өрнек (бүйір және артқы қасбеттер)
+  yglaze: () => canvasTex("yglaze", (g, S) => {
+    const bh = 12, bw = 24, P = 16;
+    g.fillStyle = "#b8966a"; g.fillRect(0, 0, S, S);
+    const wrap = x => ((x % P) + P) % P, cen = x => { const w = wrap(x); return w >= P / 2 ? w - P : w; };
+    for (let r = 0; r < S / bh; r++) for (let c = 0; c < S / bw; c++) {
+      const u = wrap(r + c), v = wrap(r - c);
+      const d = Math.min(Math.abs(cen(r - 8)) + Math.abs(cen(c)), Math.abs(cen(r)) + Math.abs(cen(c - 8)));
+      let col = [208 + rnd(-14, 14), 174 + rnd(-12, 12), 124 + rnd(-10, 10)];
+      if (u === 0 || v === 0) col = [24, 74 + rnd(-8, 8), 140 + rnd(-10, 10)];       // қою көк тор
+      else if (d === 3) col = [52, 172 + rnd(-10, 10), 190 + rnd(-10, 10)];         // көгілдір ромб
+      else if (d <= 1) col = [236, 236, 228];                                         // ақ ортасы
+      g.fillStyle = `rgb(${col[0] | 0},${col[1] | 0},${col[2] | 0})`;
+      g.fillRect(c * bw + 1.2, r * bh + 1.2, bw - 2.4, bh - 2.4);
+    }
+  }, 384),
+  // Куфи жазуы бар көк белдеу
+  ykufic: () => canvasTex("ykufic", (g, S) => {
+    g.fillStyle = "#16507c"; g.fillRect(0, 0, S, S);
+    g.fillStyle = "#f2efe6";
+    g.fillRect(0, S * .06, S, S * .05); g.fillRect(0, S * .89, S, S * .05);
+    let x = 6;
+    while (x < S - 10) {
+      const w = 7 + rnd(0, 6), h = S * (.3 + rnd(0, .45));
+      g.fillRect(x, S * .8 - h, w, h);                                  // тік әріп
+      if (rnd(0, 1) < .5) g.fillRect(x, S * .8 - h, w * 2.4, w * .9);   // жоғарғы ілгек
+      g.fillRect(x, S * .74, w * 2.6, w);                               // негізгі сызық
+      x += w * 2.8 + rnd(0, 6);
+    }
+  }),
+  // Гурхана күмбезінің көгілдір глазурі (жұқа ромб торымен)
+  yturq: () => canvasTex("yturq", (g, S) => {
+    g.fillStyle = "#2a9fb2"; g.fillRect(0, 0, S, S);
+    for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(${rnd(20, 80) | 0},${rnd(150, 210) | 0},${rnd(180, 220) | 0},.35)`; g.fillRect(rnd(0, S), rnd(0, S), 3, 3); }
+    g.strokeStyle = "rgba(14,60,110,.55)"; g.lineWidth = 2;
+    for (let k = -S; k < S * 2; k += 32) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k + S, S); g.stroke(); g.beginPath(); g.moveTo(k, S); g.lineTo(k + S, 0); g.stroke(); }
+    g.fillStyle = "rgba(255,255,255,.7)";
+    for (let x = 16; x < S; x += 32) for (let y = 0; y < S; y += 32) { g.beginPath(); g.arc(x, y, 2.4, 0, 7); g.fill(); }
+  }),
   ground: () => canvasTex("ground", (g, S) => {
     g.fillStyle = "#d4b88c"; g.fillRect(0, 0, S, S);
     for (let i = 0; i < 4000; i++) { g.fillStyle = `rgba(${rnd(120, 170) | 0},${rnd(100, 130) | 0},70,${rnd(.05, .2)})`; g.fillRect(rnd(0, S), rnd(0, S), rnd(1, 3), rnd(1, 3)); }

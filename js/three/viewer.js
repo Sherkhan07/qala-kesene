@@ -58,11 +58,11 @@ export function createViewer(host, opts = {}) {
     state.box = box; state.center = center; state.size = Math.max(size.x, size.y, size.z);
     const S = state.size;
     controls.target.copy(center);
-    const dir = { top: new THREE.Vector3(.35, 1.1, .9), hero: new THREE.Vector3(1, .5, .42) }[view] || new THREE.Vector3(.75, .42, 1);
+    const dir = { top: new THREE.Vector3(.35, 1.1, .9), hero: new THREE.Vector3(-.42, .3, 1) }[view] || new THREE.Vector3(.75, .42, 1);
     // шекаралық сфера көрініске толық сыятын қашықтық (тар экранда көлденең бұрышты ескереміз)
     const radius = size.length() / 2, vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
     const hHalf = Math.atan(Math.tan(vHalf) * Math.max(camera.aspect, .3));
-    const dist = radius / Math.sin(Math.min(vHalf, hHalf)) * ({ top: .8, hero: .98 }[view] || 1.02);
+    const dist = radius / Math.sin(Math.min(vHalf, hHalf)) * ({ top: .8, hero: .82 }[view] || 1.02);
     camera.position.copy(center).add(dir.normalize().multiplyScalar(dist));
     camera.near = S / 200; camera.far = S * 60; camera.updateProjectionMatrix();
     controls.minDistance = S * .35; controls.maxDistance = S * 5;

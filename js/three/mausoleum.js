@@ -1,6 +1,7 @@
 // Кесенелердің параметрлік 3D құрастырушысы.
 // Әр кесене heritage.js-тегі model параметрлерінен жиналады (схемалық реконструкция).
 import * as THREE from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { mat } from "./materials.js";
 import { add, boxGeo, cylGeo, domeGeo, archShape, extrude, ground } from "./geom.js";
 
@@ -128,7 +129,97 @@ function kobyz(p) {
   return g;
 }
 
-const BUILDERS = { portalDome, domedCube, tentDome, longTomb, yurtStone, kobyz };
+// ===================== Қожа Ахмет Ясауи кесенесі =====================
+// Нақты сәулетіне жақын жеке реконструкция (өлшемдер метрмен, кесененің алды +z бағытында):
+//  • жоспары ≈ 46,5 × 65,5 м; аяқталмаған кірпіш пештақ — биіктігі 37,5 м, терең сүйір аркалы тауашасы бар,
+//    бетінен құрылыс кезіндегі ағаш арқалықтар шығып тұрады;
+//  • төрт бұрышында дөңгелек мұнаралар; бүйір және артқы қасбеттер глазурьлі геометриялық өрнекпен қапталған,
+//    жоғарғы жағында куфи жазуы бар көк белдеу;
+//  • Қазандық залының үстінде — диаметрі ≈ 18 м глазурьсіз кірпіш күмбез;
+//  • гурхана (жерлеу бөлмесі) үстінде — биік барабандағы көгілдір қабырғалы күмбез;
+//  • шатырда кіші күмбездер.
+function yasawi() {
+  const g = new THREE.Group();
+  const W = 46.5, L = 65.5, H = 18, zf = L / 2;           // zf — порталдың алдыңғы беті
+  const PW = 30, PH = 37.5, AW = 17, AH = 29, ND = 7;     // портал ені/биіктігі, арка ені/биіктігі, тауаша тереңдігі
+  const wallKind = "yglaze";
+
+  // іргетас
+  add(g, boxGeo(W + 6, PLINTH, L + 6), mat("stone", [10, 1]), 0, 0, 0, "wall");
+  const B = PLINTH;
+
+  // негізгі көлем (порталдың артында)
+  const bodyD = L - ND - 2;
+  add(g, boxGeo(W, H, bodyD), mat(wallKind, [W / 7, H / 7]), 0, B, -L / 2 + bodyD / 2, "wall");
+  // жоғарғы куфи белдеу
+  add(g, boxGeo(W + .4, 2, bodyD + .4), mat("ykufic", [W / 5, 1]), 0, B + H - 3.2, -L / 2 + bodyD / 2, "detail");
+  // қасбеттегі тереңдетілген аркалы тауашалар қатары (бүйірлерде)
+  const nicheMat = mat("ybrick", [1, 2], { color: 0x8a6a4a }); // көлеңкедегі ойық реңкі
+  [-1, 1].forEach(side => {
+    for (let i = 0; i < 4; i++) {
+      const z = -L / 2 + 8 + i * 11.5;
+      const m = add(g, extrude(archShape(5, 10), .12), nicheMat, side * (W / 2 + .02), B + 2, z, "detail");
+      m.rotation.y = side * Math.PI / 2;
+    }
+  });
+
+  // бұрыш мұнаралары
+  const towers = [[-W / 2, -L / 2, 22], [W / 2, -L / 2, 22], [-W / 2, zf - ND - 2, 24], [W / 2, zf - ND - 2, 24]];
+  towers.forEach(([x, z, h]) => {
+    add(g, cylGeo(3.3, 3.6, h, 28), mat(wallKind, [3, h / 6]), x, B, z, "wall");
+    add(g, domeGeo(3.4, { stretch: .45 }), mat("ybrick", [3, 1]), x, B + h, z, "dome");
+  });
+
+  // ---- пештақ: арка ойығы бар профильді экструзия (нақты тереңдік) ----
+  const sh = new THREE.Shape(), hs = AH - AW * .62;
+  sh.moveTo(-PW / 2, 0); sh.lineTo(-AW / 2, 0); sh.lineTo(-AW / 2, hs);
+  sh.quadraticCurveTo(-AW / 2, hs + AW * .5, 0, AH);
+  sh.quadraticCurveTo(AW / 2, hs + AW * .5, AW / 2, hs);
+  sh.lineTo(AW / 2, 0); sh.lineTo(PW / 2, 0); sh.lineTo(PW / 2, PH); sh.lineTo(-PW / 2, PH); sh.lineTo(-PW / 2, 0);
+  const portalMat = mat("ybrick", [1 / 3, 1 / 3]);
+  add(g, new THREE.ExtrudeGeometry(sh, { depth: ND, bevelEnabled: false, curveSegments: 24 }), portalMat, 0, B, zf - ND, "wall");
+  // тауашаның артқы қабырғасы және есік
+  add(g, boxGeo(PW, PH, 2), mat("ybrick", [PW / 3, PH / 3]), 0, B, zf - ND - 1, "wall");
+  add(g, extrude(archShape(5, 8.5), .3), mat("dark"), 0, B, zf - ND + .02, "detail");
+  add(g, extrude(archShape(3.2, 4), .3), mat("dark"), 0, B + 12, zf - ND + .02, "detail");     // жоғарғы терезе
+  // пештақ шетіндегі тік жарты бағаналар
+  [-1, 1].forEach(sx => add(g, cylGeo(1.1, 1.1, PH, 18), mat("ybrick", [1, PH / 3]), sx * PW / 2, B, zf - .6, "wall"));
+  // құрылыс кезінен қалған ағаш арқалықтар (пештақ аяқталмаған)
+  const poles = [];
+  [-1, 1].forEach(sx => {
+    for (let x = AW / 2 + 1.6; x < PW / 2 - 1.2; x += 2.6) for (let y = 3.5; y < PH - 2; y += 3.3)
+      poles.push(new THREE.CylinderGeometry(.13, .13, 1.6, 6).rotateX(Math.PI / 2).translate(sx * x, B + y, zf + .8));
+  });
+  for (let y = AH + 1.5; y < PH - 1.5; y += 3.3) for (let x = -AW / 2 + 1; x < AW / 2; x += 2.6)
+    poles.push(new THREE.CylinderGeometry(.13, .13, 1.6, 6).rotateX(Math.PI / 2).translate(x, B + y, zf + .8));
+  add(g, mergeGeometries(poles), new THREE.MeshStandardMaterial({ color: 0x6b4a2e, roughness: 1 }), 0, 0, 0, "detail");
+
+  // ---- Қазандық: глазурьсіз үлкен күмбез ----
+  const zc = zf - ND - 2 - 9.1;
+  add(g, cylGeo(11, 11.6, 4, 8).rotateY(Math.PI / 8), mat("ybrick", [8, 1]), 0, B + H, zc, "wall");
+  add(g, cylGeo(9.6, 9.6, 3.5, 48), mat("ybrick", [10, 1]), 0, B + H + 4, zc, "wall");
+  add(g, domeGeo(9.3, { stretch: 1 }), mat("ybrick", [10, 3]), 0, B + H + 7.5, zc, "dome");
+  add(g, cylGeo(.25, .4, 2.2, 8), mat("ybrick"), 0, B + H + 7.5 + 9.2, zc, "detail");
+
+  // ---- Гурхана: биік барабандағы көгілдір қабырғалы күмбез ----
+  const zg = zc - 9.1 - 2.5 - 6.5;
+  add(g, boxGeo(14, 3, 14), mat(wallKind, [2, 1]), 0, B + H, zg, "wall");
+  add(g, cylGeo(6.4, 6.4, 7.5, 48), mat("yturq", [6, 2]), 0, B + H + 3, zg, "wall");
+  add(g, cylGeo(6.5, 6.5, 2.2, 48), mat("ykufic", [7, 1]), 0, B + H + 3 + 5, zg, "detail");
+  add(g, domeGeo(6.3, { stretch: 1.38, ribbed: true, ribs: 36 }), mat("yturq", [8, 2]), 0, B + H + 10.5, zg, "dome");
+  const gt = B + H + 10.5 + 6.3 * 1.38;
+  add(g, cylGeo(.2, .45, 2, 8), mat("tile"), 0, gt - .1, zg, "detail");
+  add(g, new THREE.SphereGeometry(.45, 12, 8), mat("tile"), 0, gt + 2.2, zg, "detail");
+
+  // ---- шатырдағы кіші күмбездер (мешіт, кітапхана, асхана т.б. бөлмелер үстінде) ----
+  [[-14.5, zc + 4], [14.5, zc + 4], [-14.5, zc - 10], [14.5, zc - 10], [-13, -L / 2 + 9], [13, -L / 2 + 9], [0, -L / 2 + 6]].forEach(([x, z]) => {
+    add(g, cylGeo(3.1, 3.1, 1.6, 24), mat("ybrick", [3, 1]), x, B + H, z, "wall");
+    add(g, domeGeo(3, { stretch: 1.05 }), mat("ybrick", [3, 1]), x, B + H + 1.6, z, "dome");
+  });
+  return g;
+}
+
+const BUILDERS = { yasawi, portalDome, domedCube, tentDome, longTomb, yurtStone, kobyz };
 
 export function buildMausoleum(model, { withGround = true } = {}) {
   const g = (BUILDERS[model.type] || domedCube)(model);
