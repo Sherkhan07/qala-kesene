@@ -28,21 +28,21 @@ lb.addEventListener("click", () => lb.close());
 // 3D модульдер: three.js тек қажет кезде жүктеледі
 const load3d = () => Promise.all([import("../three/viewer.js"), import("../three/mausoleum.js")]);
 
-// Hero: Ясауи кесенесі, әдепкіде LiDAR сканерлеу
+// Hero: Ясауи кесенесі, әдепкіде тарихи көрініс (кесененің негізгі бейнесі)
 const heroEl = document.getElementById("heroView");
 whenVisible(heroEl, async () => {
   try {
     const [{ createViewer }, { buildMausoleum }] = await load3d();
     const v = createViewer(heroEl, { fog: false, maxPoints: 110000 });
-    v.setModel(buildMausoleum(byId("yasawi").model));
-    v.setMode("lidar");
-    let restart = null;
+    v.setModel(buildMausoleum(byId("yasawi").model), { view: "hero" });
+    v.setMode("real");
+    heroEl.classList.add("ready");
     heroEl.querySelectorAll("[data-hero]").forEach(b => b.onclick = () => {
       heroEl.querySelectorAll("[data-hero]").forEach(x => x.classList.toggle("on", x === b));
       v.setMode(b.dataset.hero);
     });
-    // LiDAR сканерлеу аяқталған соң қайта бастау
-    restart = setInterval(() => { if (v.mode === "lidar") v.setMode("lidar"); }, 11000);
+    // LiDAR режимінде сканерлеу аяқталған соң қайта бастау
+    setInterval(() => { if (v.mode === "lidar") v.setMode("lidar"); }, 11000);
   } catch (e) { console.error(e); heroEl.innerHTML = '<div class="viewer-err">3D көрініс жүктелмеді.</div>'; }
 }, "0px");
 

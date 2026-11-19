@@ -7,6 +7,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { MeshSurfaceSampler } from "three/addons/math/MeshSurfaceSampler.js";
+import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
+import { VRButton } from "three/addons/webxr/VRButton.js";
 import { GLASS } from "./materials.js";
 
 const isModelMesh = o => o.isMesh && o.userData.role !== "ground";
@@ -55,11 +57,11 @@ export function createViewer(host, opts = {}) {
     state.box = box; state.center = center; state.size = Math.max(size.x, size.y, size.z);
     const S = state.size;
     controls.target.copy(center);
-    const dir = view === "top" ? new THREE.Vector3(.35, 1.1, .9) : new THREE.Vector3(.75, .42, 1);
+    const dir = { top: new THREE.Vector3(.35, 1.1, .9), hero: new THREE.Vector3(1, .5, .42) }[view] || new THREE.Vector3(.75, .42, 1);
     // шекаралық сфера көрініске толық сыятын қашықтық (тар экранда көлденең бұрышты ескереміз)
     const radius = size.length() / 2, vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
     const hHalf = Math.atan(Math.tan(vHalf) * Math.max(camera.aspect, .3));
-    const dist = radius / Math.sin(Math.min(vHalf, hHalf)) * (view === "top" ? .8 : 1.02);
+    const dist = radius / Math.sin(Math.min(vHalf, hHalf)) * ({ top: .8, hero: .98 }[view] || 1.02);
     camera.position.copy(center).add(dir.normalize().multiplyScalar(dist));
     camera.near = S / 200; camera.far = S * 60; camera.updateProjectionMatrix();
     controls.minDistance = S * .35; controls.maxDistance = S * 5;
@@ -191,10 +193,14 @@ export function createViewer(host, opts = {}) {
   }
 
   // ---------- цикл ----------
-  let running = true, last = performance.now();
-  new IntersectionObserver(es => { running = es[0].isIntersecting; if (running) { last = performance.now(); loop(); } }).observe(host);
+  // Анимация циклы: setAnimationLoop (WebXR үшін міндетті); көрінбейтін кезде тоқтатылады
+  let last = performance.now();
+  const start = () => { last = performance.now(); renderer.setAnimationLoop(loop); };
+  new IntersectionObserver(es => {
+    if (es[0].isIntersecting) start();
+    else if (!renderer.xr.isPresenting) renderer.setAnimationLoop(null);
+  }).observe(host);
   function loop(now = performance.now()) {
-    if (!running) return;
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     controls.update();
     let info = "";
@@ -214,12 +220,36 @@ export function createViewer(host, opts = {}) {
     }
     opts.onFrame && opts.onFrame(state.mode, info);
     renderer.render(scene, camera);
-    requestAnimationFrame(loop);
   }
-  resize(); loop();
+  resize(); start();
+
+  // ---------- WebXR (VR шлем) ----------
+  async function enableVR(container) {
+    if (!navigator.xr || !(await navigator.xr.isSessionSupported("immersive-vr").catch(() => false))) return null;
+    renderer.xr.enabled = true;
+    const btn = VRButton.createButton(renderer);
+    btn.removeAttribute("style"); btn.className = "tool"; btn.textContent = "VR";
+    container.append(btn);
+    // VR-да пайдаланушы координат басында тұрады: модельді алдына шығарамыз
+    renderer.xr.addEventListener("sessionstart", () => {
+      const m = state.model; m.userData._pos = m.position.clone();
+      m.position.sub(new THREE.Vector3(state.center.x, state.box.min.y, state.center.z + state.size * .9));
+    });
+    renderer.xr.addEventListener("sessionend", () => { const m = state.model; if (m.userData._pos) m.position.copy(m.userData._pos); start(); });
+    return btn;
+  }
+
+  // ---------- GLB экспорт (Blender, AR қосымшалары үшін) ----------
+  function exportGLB() {
+    const wasMode = state.mode; setMode("real");
+    return new Promise((resolve, reject) => {
+      new GLTFExporter().parse(state.model, glb => { setMode(wasMode); resolve(new Blob([glb], { type: "model/gltf-binary" })); },
+        err => { setMode(wasMode); reject(err); }, { binary: true, maxTextureSize: 1024 });
+    });
+  }
 
   return {
-    setModel, setMode, enableMorph,
+    setModel, setMode, enableMorph, enableVR, exportGLB,
     get mode() { return state.mode; },
     setAutoRotate(v) { controls.autoRotate = v; },
     get autoRotate() { return controls.autoRotate; },

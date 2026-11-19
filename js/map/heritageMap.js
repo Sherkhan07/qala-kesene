@@ -38,7 +38,7 @@ export class HeritageMap {
     this.shell = shell; this.cfg = cfg;
     this.regions = REGIONS[cfg.kind];
     this.active = new Set(Object.keys(this.regions));
-    this.q = ""; this.sel = null; this.markers = new Map(); this.popup = null; this.touring = null; this.rot = null;
+    this.q = ""; this.century = 0; this.sel = null; this.markers = new Map(); this.popup = null; this.touring = null; this.rot = null;
     this.$ = s => shell.querySelector(s);
     this.renderControls();
     this.renderList();
@@ -47,7 +47,9 @@ export class HeritageMap {
   }
 
   visible(o) {
-    const q = this.q;
+    const q = this.q, c = this.century;
+    // «Уақыт машинасы»: таңдалған ғасырда бар нысандар (қала — s..e аралығында, кесене — салынғаннан бері)
+    if (c && (o.s > c || (o.kind === "city" && o.e < c))) return false;
     return this.active.has(o.region) && (!q || o.name.toLowerCase().includes(q) || (o.alt || "").toLowerCase().includes(q) || o.loc.toLowerCase().includes(q));
   }
   visibleItems() { return this.cfg.data.filter(o => this.visible(o)); }
@@ -68,12 +70,30 @@ export class HeritageMap {
       f.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c.dataset.r === "*" ? this.active.size === keys.length : this.active.has(c.dataset.r)));
       this.refresh();
     });
+    this.initTimeline();
     this.$("[data-search]").addEventListener("input", e => { this.q = e.target.value.trim().toLowerCase(); this.refresh(); });
     const list = this.$("[data-list]");
     list.addEventListener("click", e => { const b = e.target.closest(".item"); if (b) this.select(b.dataset.id, true); });
     list.addEventListener("mouseover", e => { const b = e.target.closest(".item"); this.markers.forEach((m, id) => m.getElement().classList.toggle("hl", !!b && b.dataset.id === id)); });
     list.addEventListener("mouseleave", () => this.markers.forEach(m => m.getElement().classList.remove("hl")));
     this.$(".map-tools").addEventListener("click", e => { const b = e.target.closest(".tool"); if (b) this.tool(b.dataset.act, b); });
+  }
+
+  initTimeline() {
+    const range = this.$("[data-tl]"), label = this.$("[data-cent]"), play = this.$("[data-tl-play]");
+    const set = c => {
+      this.century = c; range.value = c;
+      label.textContent = c ? `${roman(c)} ғасыр · ${this.visibleItems().length} нысан` : "Барлық ғасырлар";
+      this.refresh();
+    };
+    range.addEventListener("input", () => { this.stopPlay(); set(+range.value); });
+    this.stopPlay = () => { clearInterval(this.tlTimer); this.tlTimer = null; play.textContent = "▶"; play.classList.remove("on"); };
+    play.onclick = () => {
+      if (this.tlTimer) return this.stopPlay();
+      play.textContent = "■"; play.classList.add("on");
+      let c = 1; set(c);
+      this.tlTimer = setInterval(() => { c++; if (c > 20) { this.stopPlay(); set(0); } else set(c); }, 1300);
+    };
   }
 
   renderList() {
@@ -202,6 +222,11 @@ export function mapShellHTML({ placeholder, route = false }) {
   <div class="map-shell">
     <aside class="side">
       <div class="filters" data-filters></div>
+      <div class="timeline">
+        <div class="tl-head"><span>Уақыт машинасы</span><b data-cent>Барлық ғасырлар</b></div>
+        <div class="tl-row"><button class="tool" data-tl-play title="Ғасырларды автоматты өту">▶</button>
+          <input type="range" min="0" max="20" value="0" data-tl aria-label="Ғасыр"></div>
+      </div>
       <div class="search"><input type="search" placeholder="${placeholder}" data-search aria-label="Іздеу"></div>
       <div class="list" data-list></div>
     </aside>

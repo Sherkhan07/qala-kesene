@@ -52,6 +52,7 @@ function render(o) {
           <span class="sp"></span>
           <button class="tool on" id="spin" title="Автоматты айналдыру">⟳</button>
           <button class="tool" id="snap" title="Суретке түсіру">📷</button>
+          <button class="tool" id="glb" title="3D модельді .glb форматында жүктеу (Blender, AR)">⬇ GLB</button>
         </div>
         <div class="scan" id="scan"><i></i></div>
         <div class="viewer-stats" id="stats" hidden></div>
@@ -125,6 +126,16 @@ async function init3D(o, MODES) {
       scan.style.display = b.dataset.mode === "lidar" ? "block" : "none";
     });
     document.getElementById("spin").onclick = e => { v.setAutoRotate(!v.autoRotate); e.currentTarget.classList.toggle("on", v.autoRotate); };
+    document.getElementById("glb").onclick = async e => {
+      const b = e.currentTarget; b.disabled = true; b.textContent = "…";
+      try {
+        const blob = await v.exportGLB();
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${o.id}.glb`; a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      } catch (err) { console.error(err); alert("GLB экспорты сәтсіз аяқталды."); }
+      b.disabled = false; b.textContent = "⬇ GLB";
+    };
+    v.enableVR(host.querySelector(".viewer-tools"));
     document.getElementById("snap").onclick = () => {
       const a = document.createElement("a"); a.href = v.screenshot(); a.download = `${o.id}-3d.png`; a.click();
     };

@@ -58,7 +58,7 @@ export const CITIES = [
 export const MAUSOLEUMS = [
   { id: "yasawi", name: "Қожа Ахмет Ясауи кесенесі", era: "XIV ғ. соңы", s: 14, loc: "Түркістан қаласы", lat: 43.2975, lon: 68.2711, region: "south", unesco: true,
     desc: "Әмір Темірдің бұйрығымен XIV ғасырдың соңында тұрғызылған орта ғасырлық сәулет өнерінің жауһары, ЮНЕСКО-ның Бүкіләлемдік мұралар тізіміне енген нысан.",
-    model: { type: "portalDome", w: 40, d: 52, h: 22, portalH: 37, portalW: 46, dome: { r: 9, mat: "tile", ribbed: true, stretch: 1.25 }, rear: { r: 8, mat: "tile", ribbed: true, stretch: 1.45 }, towers: true, guldasta: true } },
+    model: { type: "portalDome", w: 40, d: 52, h: 22, portalH: 37, portalW: 46, dome: { r: 10.5, mat: "brick", stretch: 1.1 }, rear: { r: 6.8, mat: "tile", ribbed: true, stretch: 1.55 }, towers: true, guldasta: true } },
   { id: "arystan-bab", name: "Арыстан баб кесенесі", era: "XII – XIV ғғ.", s: 12, loc: "Түркістан обл., Отырар ауд.", lat: 42.8528, lon: 68.2508, region: "south",
     desc: "Қожа Ахмет Ясауидің ұстазына арнап XII ғасырда салынып, XIV ғасырда қайта жаңғыртылған кесене.",
     model: { type: "portalDome", w: 22, d: 30, h: 10, portalH: 15, portalW: 18, dome: { r: 5, mat: "brick" }, rear: { r: 4, mat: "brick" }, towers: true, minarets: true } },

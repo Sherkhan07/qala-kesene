@@ -4,6 +4,7 @@ const NAV = [
   ["cities", "cities.html", "Қалалар"],
   ["mausoleums", "mausoleums.html", "Кесенелер"],
   ["registry", "registry.html", "Тізілім"],
+  ["learn", "learn.html", "Білім"],
   ["tech", "index.html#digital", "Технология"]
 ];
 
@@ -37,7 +38,7 @@ export function mountLayout() {
       </div>
       <div>
         <h4>Бөлімдер</h4>
-        ${NAV.slice(0, 4).map(([, href, t]) => `<a href="${href}">${t}</a>`).join("")}
+        ${NAV.slice(0, 5).map(([, href, t]) => `<a href="${href}">${t}</a>`).join("")}
       </div>
       <div>
         <h4>Дереккөздер</h4>
