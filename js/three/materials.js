@@ -82,14 +82,16 @@ const COLORS = { dark: 0x2e1d12, water: 0x3f86a8, mound: 0xc4a274, glass: 0x7fd6
 // mat("brick", [rx, ry]) — қайталанатын текстурасы бар материал
 export function mat(kind, rep = [1, 1], opts = {}) {
   if (kind === "water") return new THREE.MeshStandardMaterial({ color: COLORS.water, roughness: .25, metalness: .1 });
-  if (kind === "dark") return new THREE.MeshStandardMaterial({ color: COLORS.dark, roughness: 1 });
+  if (kind === "dark") { const m = new THREE.MeshStandardMaterial({ color: COLORS.dark, roughness: 1 }); m.userData.kind = "dark"; return m; }
   if (kind === "mound") return new THREE.MeshStandardMaterial({ color: COLORS.mound, roughness: 1, flatShading: true });
   if (kind === "roof") return new THREE.MeshStandardMaterial({ color: COLORS.roof, roughness: 1 });
   const src = (TEX[kind] || TEX.brick)();
   const t = src.clone(); t.needsUpdate = true; t.repeat.set(rep[0], rep[1]);
-  return new THREE.MeshStandardMaterial({
+  const m = new THREE.MeshStandardMaterial({
     map: t, roughness: kind === "tile" ? .35 : .92, metalness: kind === "tile" ? .1 : 0, ...opts
   });
+  m.userData.kind = kind;
+  return m;
 }
 
 export const GLASS = () => new THREE.MeshPhysicalMaterial({

@@ -36,6 +36,7 @@ export function createViewer(host, opts = {}) {
   scene.add(sun, sun.target);
   const grid = new THREE.GridHelper(1, 40, 0x48cae4, 0x1b4466); grid.visible = false; scene.add(grid);
 
+  const tickers = new Set();
   const state = { model: null, mode: "real", twin: null, lidar: null, scan: 0, size: 1, center: new THREE.Vector3(), box: new THREE.Box3(), morph: null };
 
   function resize() {
@@ -195,13 +196,13 @@ export function createViewer(host, opts = {}) {
   // ---------- цикл ----------
   // Анимация циклы: setAnimationLoop (WebXR үшін міндетті); көрінбейтін кезде тоқтатылады
   let last = performance.now();
+  // Цикл үнемі тіркелген, бірақ көрермен экраннан тыс болса кадр өткізіліп жіберіледі (GPU үнемдеу)
+  let visible = true;
   const start = () => { last = performance.now(); renderer.setAnimationLoop(loop); };
-  new IntersectionObserver(es => {
-    if (es[0].isIntersecting) start();
-    else if (!renderer.xr.isPresenting) renderer.setAnimationLoop(null);
-  }).observe(host);
+  new IntersectionObserver(es => { visible = es[es.length - 1].isIntersecting; }).observe(host);
   function loop(now = performance.now()) {
-    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!visible && !renderer.xr.isPresenting) { last = now; return; }
+    const dt = Math.max(0, Math.min(.05, (now - last) / 1000)); last = now;
     controls.update();
     let info = "";
     if (state.mode === "lidar" && state.lidar) {
@@ -219,6 +220,8 @@ export function createViewer(host, opts = {}) {
       info = `Макс. кернеу ${(2 + Math.sin(t) * .08).toFixed(2)} МПа · 6 датчик`;
     }
     opts.onFrame && opts.onFrame(state.mode, info);
+    // бір модульдің қатесі бүкіл анимация циклін тоқтатпауы керек
+    tickers.forEach(f => { try { f(dt, now); } catch (err) { console.error(err); } });
     renderer.render(scene, camera);
   }
   resize(); start();
@@ -250,6 +253,12 @@ export function createViewer(host, opts = {}) {
 
   return {
     setModel, setMode, enableMorph, enableVR, exportGLB,
+    scene, camera, renderer, controls, host,
+    get model() { return state.model; }, get box() { return state.box; }, get center() { return state.center; }, get size() { return state.size; },
+    get lidar() { return state.lidar; }, get scan() { return state.scan; },
+    addTicker(f) { tickers.add(f); return () => tickers.delete(f); },
+    // Экрандағы пиксель координатасы (3D нүктенің үстіне HTML белгі қою үшін)
+    project(v3) { const p = v3.clone().project(camera); return { x: (p.x + 1) / 2 * host.clientWidth, y: (1 - p.y) / 2 * host.clientHeight, behind: p.z > 1 }; },
     get mode() { return state.mode; },
     setAutoRotate(v) { controls.autoRotate = v; },
     get autoRotate() { return controls.autoRotate; },

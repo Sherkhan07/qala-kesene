@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArchHeritage VR · Qala&Kesene</title>
+<meta name="description" content="ArchHeritage VR платформасы: LiDAR, HBIM, цифрлық егіз, VR/AR/AI, уақыт сызығы және AR-конструктор">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body data-page="platform">
+<main>
+  <div class="wrap page-head" style="padding-bottom:18px">
+    <div class="crumbs"><a href="index.html">Басты бет</a> / ArchHeritage VR</div>
+    <h1>«ArchHeritage VR» платформасы</h1>
+    <p>Цифрлық қайта жаңғыру тізбегінің төрт сатысы бір жүйеде: LiDAR → HBIM → цифрлық егіз → VR/AR/AI. Бұған уақыт сызығы мен AR-конструктор модульдері қосылған. Нысанды жоғарғы тізімнен таңдаңыз.</p>
+    <div class="chain-steps" id="steps">
+      <button class="cstep" data-go="lidar"><small>1-саты</small><b>LiDAR & Фотограмметрия</b></button>
+      <button class="cstep" data-go="hbim"><small>2-саты</small><b>HBIM</b></button>
+      <button class="cstep" data-go="twin"><small>3-саты</small><b>Digital Twin</b></button>
+      <button class="cstep" data-go="xr"><small>4-саты</small><b>VR / AR / AI</b></button>
+      <button class="cstep" data-go="time"><small>Модуль</small><b>Timeline & Morphing</b></button>
+      <button class="cstep" data-go="build"><small>Модуль</small><b>AR-Конструктор</b></button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="device">
+      <div class="app">
+        <nav class="rail" id="rail" aria-label="Модульдер">
+          <button data-mod="lidar" title="LiDAR & Фотограмметрия"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h3M17 12h3M12 4v3M12 17v3"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg>LiDAR</button>
+          <button data-mod="hbim" title="HBIM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6v10H3z"/><path d="M3 15h18M12 4v16"/></svg>HBIM</button>
+          <button data-mod="twin" title="Цифрлық егіз"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h4l2-6 4 12 3-8 2 2h3"/></svg>Егіз</button>
+          <button data-mod="xr" title="VR / AR / AI"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="4"/><circle cx="8.5" cy="12" r="2"/><circle cx="15.5" cy="12" r="2"/></svg>VR/AI</button>
+          <button data-mod="time" title="Уақыт сызығы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg>Уақыт</button>
+          <button data-mod="build" title="AR-Конструктор"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V10l6-5 6 5v10"/><path d="M10 20v-5a2 2 0 0 1 4 0v5"/></svg>Құрастыру</button>
+        </nav>
+        <div class="stage">
+          <div class="topbar">
+            <div class="logo">ArchHeritage <i>VR</i></div>
+            <div class="seg" id="viewSeg"><button class="on" data-view="viz">Визуализация</button><button data-view="dash">Дашборд</button></div>
+            <select id="objSel" aria-label="Нысан"></select>
+          </div>
+          <div class="viewer stage-3d" id="pfView">
+            <div class="gauges" id="gauges"></div>
+            <div class="hud" id="hud"></div>
+            <div class="scan" id="scan"><i></i></div>
+            <div class="stage-msg" id="msg"></div>
+            <div class="overlay2d" id="petroBox">
+              <canvas id="petro"></canvas>
+              <div class="bar" id="petroBar"></div>
+            </div>
+          </div>
+          <div class="tl-bar" id="tlBar">
+            <div class="row"><span class="end">Тарихи</span><input type="range" id="tl" min="0" max="1000" value="0" aria-label="Уақыт сызығы"><span class="end">Заманауи</span></div>
+            <div class="tl-stops" id="tlStops"></div>
+          </div>
+        </div>
+        <aside class="panel" id="panel"></aside>
+      </div>
+    </div>
+  </div>
+</main>
+<script type="module" src="js/platform/platform.js"></script>
+</body>
+</html>

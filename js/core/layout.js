@@ -5,7 +5,7 @@ const NAV = [
   ["mausoleums", "mausoleums.html", "Кесенелер"],
   ["registry", "registry.html", "Тізілім"],
   ["learn", "learn.html", "Білім"],
-  ["tech", "index.html#digital", "Технология"]
+  ["platform", "platform.html", "ArchHeritage VR"]
 ];
 
 export function mountLayout() {
@@ -38,7 +38,7 @@ export function mountLayout() {
       </div>
       <div>
         <h4>Бөлімдер</h4>
-        ${NAV.slice(0, 5).map(([, href, t]) => `<a href="${href}">${t}</a>`).join("")}
+        ${NAV.map(([, href, t]) => `<a href="${href}">${t}</a>`).join("")}
       </div>
       <div>
         <h4>Дереккөздер</h4>

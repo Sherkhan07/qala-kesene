@@ -76,6 +76,7 @@ function render(o) {
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
         <a class="btn primary sm" href="${listPage}?focus=${o.id}">3D картада ашу</a>
         <a class="btn ghost sm" href="registry.html">Тізілім</a>
+        ${isCity ? "" : `<a class="btn ghost sm" href="platform.html?id=${o.id}#twin">ArchHeritage VR →</a>`}
       </div>
     </aside>
   </div>
