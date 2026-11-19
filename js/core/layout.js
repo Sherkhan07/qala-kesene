@@ -4,7 +4,6 @@ const NAV = [
   ["cities", "cities.html", "Қалалар"],
   ["mausoleums", "mausoleums.html", "Кесенелер"],
   ["registry", "registry.html", "Тізілім"],
-  ["learn", "learn.html", "Білім"],
   ["platform", "platform.html", "ArchHeritage VR"]
 ];
 

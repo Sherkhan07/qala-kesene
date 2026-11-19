@@ -264,26 +264,6 @@ tbody tr{cursor:pointer}
 tbody tr:hover{background:var(--surface-2)}
 .count{font-size:14px;color:var(--muted)}
 
-/* ============ Білім ============ */
-.term h3{margin:8px 0 6px}
-.term a{display:inline-block;margin-top:12px;font-size:14px;font-weight:600;color:var(--terra);text-decoration:none}
-.quiz{max-width:820px}
-.quiz-top{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600}
-.quiz-bar{height:5px;background:var(--surface-2);border-radius:5px;margin:8px 0 18px;overflow:hidden}
-.quiz-bar i{display:block;height:100%;background:var(--terra);transition:width .3s}
-.quiz-q{font-size:28px;margin-bottom:16px}
-.quiz-q small{display:block;font-family:Inter,sans-serif;font-size:15px;color:var(--muted);margin-top:8px;line-height:1.5}
-.quiz-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
-.opt{font:inherit;text-align:left;padding:13px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
-.opt:hover:not(:disabled){border-color:var(--terra)}
-.opt.ok{background:#2F8F83;color:#fff;border-color:#2F8F83}
-.opt.bad{background:#B85C3E;color:#fff;border-color:#B85C3E}
-.quiz-fb{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:16px;font-size:15px}
-.quiz-fb a{color:var(--terra);font-weight:600}
-.quiz-fb .btn{margin-left:auto}
-.quiz-end{text-align:center;padding:24px}
-.quiz-end .big{font-family:"Cormorant Garamond",serif;font-size:72px;color:var(--terra);line-height:1}
-
 /* ============ Галерея ============ */
 .gallery figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);cursor:zoom-in}
 .gallery img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .4s}
